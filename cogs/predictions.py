@@ -14,10 +14,10 @@ def build_prediction_embed(prediction) -> discord.Embed:
 
     if prediction["status"] == "open":
         color = discord.Color.blurple()
-        status_text = "🟢 Bahisler açık!"
+        status_text = "🟢 Tahminler açık!"
     elif prediction["status"] == "closed":
         color = discord.Color.orange()
-        status_text = "🟡 Bahisler kapandı, sonuç bekleniyor..."
+        status_text = "🟡 Tahminler kapandı, sonuç bekleniyor..."
     else:
         color = discord.Color.green()
         kazanan = prediction["option_a"] if prediction["winner"] == "A" else prediction["option_b"]
@@ -53,7 +53,7 @@ class BetModal(discord.ui.Modal):
         self.cog = cog
 
         self.amount_input = discord.ui.TextInput(
-            label=f"Kaç {CURRENCY_NAME} bahis yapmak istiyorsun?",
+            label=f"Kaç {CURRENCY_NAME} puan tahmin yapmak istiyorsun?",
             placeholder="Örn: 50",
             required=True,
             max_length=10,
@@ -68,12 +68,12 @@ class BetModal(discord.ui.Modal):
             return
 
         if amount <= 0:
-            await interaction.response.send_message("Bahis miktarı pozitif olmalı.", ephemeral=True)
+            await interaction.response.send_message("Tahmin miktarı pozitif olmalı.", ephemeral=True)
             return
 
         prediction = db.get_prediction(self.prediction_id)
         if not prediction or prediction["status"] != "open":
-            await interaction.response.send_message("Bu öngörü artık bahse açık değil.", ephemeral=True)
+            await interaction.response.send_message("Bu öngörü artık tahmine açık değil.", ephemeral=True)
             return
 
         guild_id = interaction.guild_id
@@ -85,7 +85,7 @@ class BetModal(discord.ui.Modal):
             secenek_adi = prediction["option_a"] if existing_bet["option"] == "A" else prediction["option_b"]
             await interaction.response.send_message(
                 f"❌ Bu öngörüde zaten **{secenek_adi}** seçeneğine bahis yaptın. "
-                f"Aynı öngörüde farklı seçeneklere bahis yapamazsın.",
+                f"Aynı öngörüde farklı seçeneklere tahmin yapamazsın.",
                 ephemeral=True,
             )
             return
@@ -102,7 +102,7 @@ class BetModal(discord.ui.Modal):
 
         secenek_adi = prediction["option_a"] if self.option == "A" else prediction["option_b"]
         await interaction.response.send_message(
-            f"✅ **{amount} {CURRENCY_NAME}** ile **{secenek_adi}** seçeneğine bahis yaptın!",
+            f"✅ **{amount} {CURRENCY_NAME}** ile **{secenek_adi}** seçeneğine tahmin yaptın!",
             ephemeral=True,
         )
 
@@ -125,7 +125,7 @@ class BetButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         prediction = db.get_prediction(self.prediction_id)
         if not prediction or prediction["status"] != "open":
-            await interaction.response.send_message("Bu öngörü artık bahse açık değil.", ephemeral=True)
+            await interaction.response.send_message("Bu öngörü artık tahmine açık değil.", ephemeral=True)
             return
 
         await interaction.response.send_modal(
@@ -175,7 +175,7 @@ class Predictions(commands.Cog):
 
         await message.edit(embed=embed, view=view)
 
-    @app_commands.command(name="tahmin-olustur", description="[Admin] Yeni bir öngörü/bahis başlatır")
+    @app_commands.command(name="tahmin-olustur", description="[Admin] Yeni bir öngörü/tahmin başlatır")
     @app_commands.describe(
         soru="Öngörü sorusu (Örn: 'Oyunu 1 saatte biter mi?')",
         secenek_a="1. seçenek (Örn: 'Biter')",
@@ -273,7 +273,7 @@ class Predictions(commands.Cog):
         )
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="tahmin-iptal", description="[Admin] Bir öngörüyü iptal eder ve tüm bahisleri iade eder")
+    @app_commands.command(name="tahmin-iptal", description="[Admin] Bir öngörüyü iptal eder ve tüm tahminleri iade eder")
     @app_commands.describe(tahmin_id="İptal edilecek öngörünün ID'si")
     @app_commands.checks.has_permissions(administrator=True)
     async def tahmin_iptal(self, interaction: discord.Interaction, tahmin_id: int):
@@ -295,7 +295,7 @@ class Predictions(commands.Cog):
         await self.refresh_prediction_message(interaction.guild, tahmin_id)
 
         await interaction.response.send_message(
-            f"✅ Öngörü #{tahmin_id} iptal edildi ve tüm bahisler iade edildi."
+            f"✅ Öngörü #{tahmin_id} iptal edildi ve tüm puanlar iade edildi."
         )
 
     @tahmin_olustur.error
