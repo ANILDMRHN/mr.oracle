@@ -2,7 +2,7 @@ import sqlite3
 import os
 from config import STARTING_BALANCE
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "data.db")
+DB_PATH = "/data/data.db"
 
 
 def get_connection():
