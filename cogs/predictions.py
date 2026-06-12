@@ -40,7 +40,7 @@ def build_prediction_embed(prediction) -> discord.Embed:
         inline=True,
     )
     embed.add_field(name="💰 Toplam Havuz", value=f"{total} {CURRENCY_NAME}", inline=False)
-    embed.set_footer(text="Tahmim yapmak için aşağıdaki butonlara tıkla")
+    embed.set_footer(text="Tahmin yapmak için aşağıdaki butonlara tıkla")
 
     return embed
 
