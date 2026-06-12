@@ -40,14 +40,14 @@ def build_prediction_embed(prediction) -> discord.Embed:
         inline=True,
     )
     embed.add_field(name="💰 Toplam Havuz", value=f"{total} {CURRENCY_NAME}", inline=False)
-    embed.set_footer(text="Bahis yapmak için aşağıdaki butonlara tıkla")
+    embed.set_footer(text="Tahmim yapmak için aşağıdaki butonlara tıkla")
 
     return embed
 
 
 class BetModal(discord.ui.Modal):
     def __init__(self, prediction_id: int, option: str, option_label: str, cog: "Predictions"):
-        super().__init__(title=f"{option_label} için bahis")
+        super().__init__(title=f"{option_label} için tahmin")
         self.prediction_id = prediction_id
         self.option = option
         self.cog = cog
@@ -84,7 +84,7 @@ class BetModal(discord.ui.Modal):
         if existing_bet and existing_bet["option"] != self.option:
             secenek_adi = prediction["option_a"] if existing_bet["option"] == "A" else prediction["option_b"]
             await interaction.response.send_message(
-                f"❌ Bu öngörüde zaten **{secenek_adi}** seçeneğine bahis yaptın. "
+                f"❌ Bu öngörüde zaten **{secenek_adi}** seçeneğine tahmin yaptın. "
                 f"Aynı öngörüde farklı seçeneklere tahmin yapamazsın.",
                 ephemeral=True,
             )
@@ -250,7 +250,7 @@ class Predictions(commands.Cog):
             # Kazanan tarafa kimse bahis yapmadıysa, herkese parası geri verilir
             for bet in bets:
                 db.change_balance(interaction.guild_id, bet["user_id"], bet["amount"])
-            sonuc_satirlari.append("Kazanan seçeneğe kimse bahis yapmadığı için tüm bahisler iade edildi.")
+            sonuc_satirlari.append("Kazanan seçeneğe kimse tahmin yapmadığı için tüm tahminler iade edildi.")
         else:
             for bet in bets:
                 if bet["option"] == winner_option:
@@ -264,7 +264,7 @@ class Predictions(commands.Cog):
         await self.refresh_prediction_message(interaction.guild, tahmin_id)
 
         kazanan_adi = prediction["option_a"] if winner_option == "A" else prediction["option_b"]
-        sonuc_metni = "\n".join(sonuc_satirlari) if sonuc_satirlari else "Bu öngörüye kimse bahis yapmadı."
+        sonuc_metni = "\n".join(sonuc_satirlari) if sonuc_satirlari else "Bu öngörüye kimse tahmin yapmadı."
 
         embed = discord.Embed(
             title=f"🏁 Öngörü #{tahmin_id} Sonuçlandı",
