@@ -20,6 +20,7 @@ EXTENSIONS = [
     "cogs.economy",
     "cogs.predictions",
     "cogs.voice_tracker",
+    "cogs.team_maker",
 ]
 
 
